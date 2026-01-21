@@ -8,11 +8,11 @@
 ## Table des Matières
 
 1. [Langue et Commentaires](#1-langue-et-commentaires)
-2. [Typage et Sécurité](#2-typage-et-sécurité)
+2. [TypeScript](#2-typescript)
 3. [Architecture](#3-architecture)
 4. [Code Propre](#4-code-propre)
 5. [Nommage](#5-nommage)
-6. [Dette Technique](#6-dette-technique)
+6. [Éviter la Dette Technique](#6-éviter-la-dette-technique)
 7. [Tests](#7-tests)
 8. [Sécurité](#8-sécurité)
 9. [Git](#9-git)
@@ -21,86 +21,168 @@
 
 ## 1. Langue et Commentaires
 
-### Langue des Commentaires
+### Règle Absolue: Langue des Commentaires
 
-> **À DÉFINIR**: Choisir la langue des commentaires pour le projet
+<!-- PERSONNALISER: Choisir la langue des commentaires -->
 
-| Option | Quand l'utiliser |
-|--------|------------------|
-| **Français** | Équipe francophone, projet interne |
-| **Anglais** | Équipe internationale, projet open-source |
+```typescript
+// ✅ BON - Commentaires dans la langue choisie
+/** Service de gestion des ressources */
+export class ResourceService {
+  /** Crée une nouvelle ressource */
+  async create(request: CreateResourceRequest): Promise<Resource> {
+    // Valide les données
+    ...
+  }
+}
 
-### Quand Commenter
+// ❌ MAUVAIS - Mélange de langues
+/** Resource management service */
+export class ResourceService {
+  // Creates a new resource
+  ...
+}
+```
+
+### Quand Commenter (Juste le Nécessaire)
 
 | Commenter | Ne Pas Commenter |
 |-----------|------------------|
-| Début de fichier (but du fichier) | Chaque fonction évidente |
+| Début de fichier (1-2 lignes: but du fichier) | Chaque fonction évidente |
 | Logique métier complexe | Getters/setters simples |
-| Décisions d'architecture | Code auto-explicatif |
+| Décisions d'architecture non-évidentes | Code auto-explicatif |
 | Workarounds et leurs raisons | Imports |
 | Algorithmes non-triviaux | Types évidents |
 
-### Interdit dans les Commentaires
+### Ce Qui est INTERDIT dans les Commentaires
 
-- ❌ Commentaires qui répètent le code
-- ❌ TODO sans ticket associé
-- ❌ Code commenté (supprimer ou versionner)
-- ❌ Commentaires obsolètes
+```typescript
+// ❌ Commentaires inutiles
+const count = items.length; // Récupère le nombre d'items
+
+// ❌ Commentaires qui répètent le code
+// Incrémente i de 1
+i++;
+
+// ❌ Commentaires obsolètes (TODO sans ticket)
+// TODO: à refactorer plus tard
+
+// ❌ Code commenté
+// const oldImplementation = () => { ... };
+```
 
 ---
 
-## 2. Typage et Sécurité
+## 2. TypeScript
 
-### Règles Strictes (TypeScript)
+<!-- PERSONNALISER: Adapter si vous n'utilisez pas TypeScript -->
 
-| Règle | Bon | Mauvais |
-|-------|-----|---------|
-| Pas de `any` | `data: unknown` + type guard | `data: any` |
+### Règles Strictes
+
+| Règle | Exemple BON | Exemple MAUVAIS |
+|-------|-------------|-----------------|
+| Pas de `any` | `data: unknown` puis type guard | `data: any` |
 | Pas de `@ts-ignore` | Corriger l'erreur | `// @ts-ignore` |
+| Pas de `@ts-expect-error` | Corriger l'erreur | `// @ts-expect-error` |
 | Types explicites | `function get(): string` | `function get()` |
-| Pas de cast forcé | Type guard ou validation | `data as User` |
+| Pas de `as` sans validation | Type guard ou validation | `data as User` |
 
-### Validation des Données
+### Type Guards
 
 ```typescript
-// ✅ BON: Validation à l'entrée
-const validated = Schema.parse(input);
+// ✅ BON: Type guard avec validation
+function isUser(data: unknown): data is User {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'id' in data &&
+    'email' in data
+  );
+}
 
-// ❌ MAUVAIS: Faire confiance aux données externes
-processData(input); // Pas de validation!
+// Utilisation
+if (isUser(response)) {
+  console.log(response.email); // Type-safe
+}
+
+// ❌ MAUVAIS: Cast forcé
+const user = response as User; // Dangereux!
+```
+
+### Null Safety
+
+```typescript
+// ✅ BON: Gestion explicite de null
+async findUser(id: string): Promise<User | null> {
+  const user = await this.repository.findById(id);
+  return user; // Peut être null
+}
+
+// Utilisation
+const user = await this.findUser(id);
+if (!user) {
+  throw new NotFoundException('Utilisateur non trouvé');
+}
+// Ici user est garanti non-null
+
+// ❌ MAUVAIS: Ignorer la possibilité de null
+const user = await this.findUser(id);
+console.log(user.email); // Erreur si user est null!
 ```
 
 ---
 
 ## 3. Architecture
 
-### Principes
+### Organisation du Code
 
-| Principe | Description |
-|----------|-------------|
-| **Séparation des responsabilités** | Chaque module a une seule raison de changer |
-| **Dépendances unidirectionnelles** | Pas de cycles, dépendances vers le bas |
-| **Isolation des features** | Features auto-contenues |
+<!-- PERSONNALISER: Adapter à votre architecture -->
+
+```
+features/[feature]/
+├── [feature].entity.ts       # Logique métier + validation
+├── [feature].dto.ts          # DTOs + schemas de validation
+├── [feature].repository.ts   # Accès données
+├── [feature].service.ts      # Orchestration
+├── [feature].controller.ts   # Endpoints HTTP
+├── [feature].module.ts       # Module
+└── __tests__/                # Tests de la feature
+```
+
+### Règle d'Isolation des Features
+
+```typescript
+// ❌ INTERDIT: Importer une feature depuis une autre
+import { OtherService } from '../other-feature/other.service';
+
+// ✅ AUTORISÉ: Importer depuis core/shared
+import { CommonService } from '../../core/common.service';
+```
 
 ### WET > DRY (Write Everything Twice)
 
 | Situation | Action |
 |-----------|--------|
-| 1ère utilisation | Garde dans le module |
+| 1ère utilisation | Garde dans la feature |
 | 2ème utilisation similaire | **Duplique** (WET) |
-| 3ème utilisation identique | **Extrait** vers shared |
-
-> L'abstraction prématurée crée plus de dette que la duplication.
+| 3ème utilisation identique | **Extrait** vers `core/` ou `shared/` |
 
 ### Pas d'Interface pour une Seule Implémentation
 
 ```typescript
 // ❌ MAUVAIS: Interface inutile
-interface IUserRepository { ... }
-class UserRepository implements IUserRepository { ... }
+interface IResourceRepository {
+  findAll(): Promise<Resource[]>;
+}
+
+class ResourceRepository implements IResourceRepository {
+  findAll(): Promise<Resource[]> { ... }
+}
 
 // ✅ BON: Classe directe (YAGNI)
-class UserRepository { ... }
+class ResourceRepository {
+  findAll(): Promise<Resource[]> { ... }
+}
 
 // Note: Ajouter l'interface quand tu as une 2ème implémentation
 ```
@@ -113,43 +195,72 @@ class UserRepository { ... }
 
 | Règle | Description |
 |-------|-------------|
-| **Courtes** | Max ~20 lignes, sinon découper |
-| **Un seul but** | Une fonction = une responsabilité |
-| **Nommage explicite** | Le nom décrit ce que ça fait |
-| **Pas d'effets de bord cachés** | Effets visibles dans le nom |
+| Courtes | Max ~20 lignes, sinon découper |
+| Un seul but | Une fonction = une responsabilité |
+| Nommage explicite | Le nom décrit ce que ça fait |
+| Pas d'effets de bord cachés | Si modifie l'état, c'est clair |
+
+```typescript
+// ✅ BON: Fonctions courtes et claires
+async createResource(request: CreateRequest): Promise<Resource> {
+  await this.validateAccess(request.parentId);
+  const resource = Resource.create(request);
+  return this.repository.save(resource);
+}
+
+// ❌ MAUVAIS: Fonction trop longue et fait trop de choses
+async createResource(request: CreateRequest): Promise<Resource> {
+  // 50 lignes de code mélangeant validation, création, logging, etc.
+}
+```
 
 ### Early Return
 
 ```typescript
-// ✅ BON: Early return
-async function findUser(id: string): Promise<User> {
-  const user = await repository.findById(id);
-  if (!user) {
-    throw new NotFoundException('User not found');
+// ✅ BON: Early return (évite l'imbrication)
+async findResource(id: string): Promise<Resource> {
+  const resource = await this.repository.findById(id);
+  if (!resource) {
+    throw new NotFoundException('Ressource non trouvée');
   }
-  return user;
+  
+  if (!resource.isActive) {
+    throw new ForbiddenException('Ressource désactivée');
+  }
+  
+  return resource;
 }
 
 // ❌ MAUVAIS: Imbrication profonde
-async function findUser(id: string): Promise<User> {
-  const user = await repository.findById(id);
-  if (user) {
-    return user;
+async findResource(id: string): Promise<Resource> {
+  const resource = await this.repository.findById(id);
+  if (resource) {
+    if (resource.isActive) {
+      return resource;
+    } else {
+      throw new ForbiddenException('Ressource désactivée');
+    }
   } else {
-    throw new NotFoundException('User not found');
+    throw new NotFoundException('Ressource non trouvée');
   }
 }
 ```
 
-### Pas de Magic Numbers/Strings
+### Éviter les Magic Numbers/Strings
 
 ```typescript
 // ✅ BON: Constantes nommées
 const MAX_NAME_LENGTH = 100;
 const DEFAULT_PAGE_SIZE = 20;
 
+if (name.length > MAX_NAME_LENGTH) {
+  throw new BadRequestException('Nom trop long');
+}
+
 // ❌ MAUVAIS: Nombres magiques
-if (name.length > 100) { ... }
+if (name.length > 100) { // C'est quoi 100?
+  throw new BadRequestException('Nom trop long');
+}
 ```
 
 ---
@@ -160,30 +271,35 @@ if (name.length > 100) { ... }
 
 | Type | Convention | Exemple |
 |------|------------|---------|
-| Fichiers composants | PascalCase | `UserCard.tsx` |
-| Fichiers autres | kebab-case | `user-utils.ts` |
-| Classes/Types | PascalCase | `UserService` |
-| Fonctions/Variables | camelCase | `getUsers` |
+| Fichiers composants | PascalCase | `ResourceCard.tsx` |
+| Fichiers autres | kebab-case | `resource-utils.ts` |
+| Classes/Types/Interfaces | PascalCase | `ResourceService` |
+| Fonctions/Variables | camelCase | `getResources` |
 | Constantes | UPPER_SNAKE | `MAX_RETRIES` |
-| Booléens | Préfixe is/has/can | `isActive` |
+| Booléens | Préfixe is/has/can | `isActive`, `hasPermission` |
 
 ### Noms Explicites
 
 ```typescript
-// ✅ BON: Noms descriptifs
+// ✅ BON: Noms qui décrivent l'intention
 const activeUsers = users.filter(u => u.isActive);
-async function validateUserPermission(userId, action): Promise<boolean>
 
-// ❌ MAUVAIS: Noms vagues
+async function validateUserHasAccess(
+  userId: string, 
+  resourceId: string
+): Promise<boolean> { ... }
+
+// ❌ MAUVAIS: Noms vagues ou abrégés
 const data = users.filter(u => u.isActive);
-async function check(uid, a): Promise<boolean>
+
+async function check(uid: string, rid: string): Promise<boolean> { ... }
 ```
 
 ---
 
-## 6. Dette Technique
+## 6. Éviter la Dette Technique
 
-### Signes de Dette
+### Signes de Dette Technique
 
 | Signe | Action |
 |-------|--------|
@@ -191,11 +307,20 @@ async function check(uid, a): Promise<boolean>
 | Fonction > 50 lignes | Découper |
 | Fichier > 300 lignes | Séparer responsabilités |
 | TODO sans ticket | Créer ticket ou supprimer |
-| Suppression de type | Corriger le type |
+| `@ts-ignore` | Corriger le type |
+| `console.log` en prod | Utiliser logger approprié |
 
 ### Règle du Boy Scout
 
 > "Laisse le code plus propre que tu l'as trouvé"
+
+### Quand NE PAS Refactorer
+
+- Si c'est hors du scope de ta tâche actuelle
+- Si ça nécessite des changements dans d'autres features
+- Si c'est un changement architectural majeur
+
+→ **Créer un ticket à la place et continuer**
 
 ---
 
@@ -208,15 +333,14 @@ async function check(uid, a): Promise<boolean>
 │                    STRATÉGIE DE TEST                                 │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│  NIVEAU 1: UNITAIRE/INTÉGRATION                                     │
-│  ├── Services, hooks, composants                                    │
-│  ├── À chaque développement                                         │
-│  └── Commande: [TEST_COMMAND]                                       │
+│  NIVEAU 1: TESTS UNITAIRES/INTÉGRATION (Chaque développement)       │
+│  ├── Tests unitaires (services, hooks, composants)                  │
+│  ├── Tests d'intégration (modules, features)                        │
+│  └── Commande: [COMMANDE_TEST]                                      │
 │                                                                     │
-│  NIVEAU 2: E2E                                                      │
-│  ├── Parcours utilisateur complets                                  │
-│  ├── Avant merge/deploy                                             │
-│  └── Commande: [E2E_COMMAND]                                        │
+│  NIVEAU 2: TESTS E2E (Avant merge/deploy)                           │
+│  ├── Tests E2E (parcours utilisateur complets)                      │
+│  └── Commande: [COMMANDE_TEST_E2E]                                  │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
@@ -224,15 +348,33 @@ async function check(uid, a): Promise<boolean>
 ### Pattern AAA (Arrange-Act-Assert)
 
 ```typescript
-it('should create user with valid data', async () => {
-  // Arrange
-  const request = { name: 'John', email: 'john@test.com' };
-  
-  // Act
-  const result = await service.create(request);
-  
-  // Assert
-  expect(result.name).toBe('John');
+describe('ResourceService', () => {
+  describe('create', () => {
+    it('crée une ressource avec les données valides', async () => {
+      // Arrange (prépare)
+      const request = { name: 'Ma Ressource', parentId: 'parent-1' };
+      mockRepository.findById.mockResolvedValue(mockParent);
+      
+      // Act (exécute)
+      const result = await service.create(request, 'user-1');
+      
+      // Assert (vérifie)
+      expect(result.name).toBe('Ma Ressource');
+      expect(mockRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'Ma Ressource' })
+      );
+    });
+
+    it('échoue si le parent n\'existe pas', async () => {
+      // Arrange
+      mockRepository.findById.mockResolvedValue(null);
+      
+      // Act & Assert
+      await expect(
+        service.create({ name: 'Test', parentId: 'invalid' }, 'user-1')
+      ).rejects.toThrow(NotFoundException);
+    });
+  });
 });
 ```
 
@@ -258,33 +400,33 @@ it('should create user with valid data', async () => {
 
 | Question | Contexte |
 |----------|----------|
-| Y a-t-il une faille potentielle ? | Injection, XSS, CSRF |
-| Les données sensibles sont-elles protégées ? | Mots de passe, tokens |
-| Les permissions sont-elles vérifiées ? | Chaque endpoint |
-| Les entrées sont-elles validées ? | Jamais faire confiance |
+| **Y a-t-il une faille potentielle ?** | Injection, XSS, CSRF, auth bypass |
+| **Les données sensibles sont-elles protégées ?** | Mots de passe, tokens, credentials |
+| **Les permissions sont-elles vérifiées ?** | Chaque endpoint, chaque action |
+| **Les entrées sont-elles validées ?** | Jamais faire confiance aux données externes |
 
 ### Règles Non-Négociables
 
 | Règle | Détail |
 |-------|--------|
-| Jamais de secrets dans le code | Variables d'environnement |
-| Valider TOUTES les entrées | Schema validation |
-| Hasher les mots de passe | bcrypt ou équivalent |
-| Vérifier les permissions | À chaque action |
+| Jamais de secrets dans le code | Utiliser variables d'environnement |
+| Valider TOUTES les entrées | Validation sur chaque DTO/input |
+| Hasher les mots de passe | bcrypt ou équivalent, jamais en clair |
+| Vérifier les permissions | Guards/middleware sur chaque endpoint |
+| Échapper les données | Pas d'injection SQL/XSS |
 
-### Multi-Tenant (si applicable)
+### Gestion des Erreurs
 
 ```typescript
-// ✅ BON: Toujours filtrer par tenant
-async findItems(tenantId: string): Promise<Item[]> {
-  return db.items.findMany({
-    where: { tenantId } // OBLIGATOIRE
-  });
+// ✅ BON: Messages génériques pour la sécurité
+if (!user || !await verifyPassword(password, user.passwordHash)) {
+  throw new UnauthorizedException('Email ou mot de passe incorrect');
+  // Note: Ne pas dire "utilisateur non trouvé" vs "mauvais mot de passe"
 }
 
-// ❌ CRITIQUE: Pas de filtre tenant
-async findItems(): Promise<Item[]> {
-  return db.items.findMany(); // FAILLE!
+// ❌ MAUVAIS: Fuite d'information
+if (!user) {
+  throw new UnauthorizedException('Utilisateur non trouvé'); // Révèle l'existence
 }
 ```
 
@@ -295,8 +437,8 @@ async findItems(): Promise<Item[]> {
 ### Branches
 
 ```
-feature/TICKET-123-add-user-filters
-fix/TICKET-456-login-timeout
+feature/TICKET-123-add-filters
+fix/TICKET-456-connection-timeout
 refactor/TICKET-789-extract-validation
 docs/update-readme
 ```
@@ -305,33 +447,34 @@ docs/update-readme
 
 ```bash
 # ✅ BON: Message clair avec ticket
-git commit -m "feat(users): add email validation TICKET-123"
-git commit -m "fix(auth): handle token expiration TICKET-456"
+git commit -m "feat(resources): ajoute filtres par date TICKET-123"
+git commit -m "fix(auth): corrige expiration token TICKET-456"
 
 # ❌ MAUVAIS: Messages vagues
 git commit -m "fix bug"
 git commit -m "update code"
+git commit -m "WIP"
 ```
 
 ### Avant de Committer
 
 ```bash
-[TYPECHECK_COMMAND]  # 0 erreurs
-[TEST_COMMAND]       # Tous passent
-[LINT_COMMAND]       # Pas d'erreurs
+[COMMANDE_TYPECHECK]   # 0 erreurs
+[COMMANDE_TEST]        # Tous les tests passent
+[COMMANDE_LINT]        # Pas d'erreurs lint
 ```
 
 ---
 
-## Checklist Avant de Soumettre
+## Checklist Avant de Soumettre du Code
 
-- [ ] Commentaires dans la bonne langue
-- [ ] Pas de suppressions de typage
-- [ ] Fonctions courtes (< 20 lignes)
-- [ ] Noms explicites
-- [ ] Entrées validées
-- [ ] Tests couvrent les cas importants
-- [ ] Vérifications passent (types, tests, lint)
-- [ ] Pas de code debug oublié
-- [ ] Code plus propre qu'avant (Boy Scout)
-- [ ] Sécurité vérifiée
+- [ ] Commentaires dans la langue définie
+- [ ] Pas de `any`, `@ts-ignore`, ou `@ts-expect-error`
+- [ ] Les fonctions sont courtes (< 20 lignes idéalement)
+- [ ] Les noms sont explicites
+- [ ] Les entrées sont validées
+- [ ] Les tests couvrent les cas importants
+- [ ] Les commandes de vérification passent
+- [ ] Pas de `console.log` oublié
+- [ ] Le code est plus propre qu'avant (Boy Scout)
+- [ ] **SÉCURITÉ**: Pas de faille identifiée

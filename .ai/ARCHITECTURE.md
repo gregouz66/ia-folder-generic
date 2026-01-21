@@ -1,96 +1,110 @@
 # Architecture Technique
 
-> **Ce document décrit la structure technique du projet.**
+> **Architecture du projet**
 >
-> **Dernière mise à jour**: [DATE]
+> **Dernière mise à jour**: [DATE]  
+> **Fichiers liés**: [`PROJECT-STATE.md`](./PROJECT-STATE.md) | [`ROADMAP.md`](./ROADMAP.md)
 
 ---
 
 ## Stack Technique
 
-| Domaine | Technologie | Statut |
+<!-- PERSONNALISER: Adapter selon votre stack -->
+
+| Domaine | Technologie | Status |
 |---------|-------------|:------:|
-| **Langage** | [Ex: TypeScript 5.x] | ✅ |
-| **Frontend** | [Ex: React 18 + Vite] | ✅ |
-| **State Management** | [Ex: Zustand + TanStack Query] | ✅ |
-| **UI** | [Ex: shadcn/ui + Tailwind] | ✅ |
-| **Backend** | [Ex: NestJS] | ✅ |
-| **ORM** | [Ex: Prisma] | ✅ |
-| **Base de données** | [Ex: PostgreSQL] | ✅ |
-| **Monorepo** | [Ex: NX + pnpm] | ✅ |
-| **Testing** | [Ex: Vitest + Playwright] | ✅ |
-| **Auth** | [Ex: Better Auth] | ✅ |
+| **Langage** | [LANGAGE] | ✅ |
+| **Frontend** | [FRAMEWORK_FRONTEND] | ✅ |
+| **Backend** | [FRAMEWORK_BACKEND] | ✅ |
+| **Base de données** | [DATABASE] | ✅ |
+| **Testing** | [TESTING_FRAMEWORK] | ✅ |
 
 ---
 
 ## Vue d'Ensemble
 
-```
-projet/
-├── .ai/                    # Documentation IA
-├── docs/                   # Documentation humains
-├── src/                    # Code source (adapter selon structure)
-│   ├── features/           # Features (Vertical Slice)
-│   ├── core/               # Code partagé
-│   └── ...
-└── tests/                  # Tests E2E
-```
+<!-- PERSONNALISER: Adapter la structure -->
 
-> **Adapter cette structure** selon l'organisation réelle du projet.
+```
+[PROJET]/
+├── [DOSSIER_SOURCE]/       # Code source principal
+│   ├── [MODULE_1]/         # Module/Feature 1
+│   ├── [MODULE_2]/         # Module/Feature 2
+│   └── [MODULE_PARTAGE]/   # Code partagé
+│
+├── [DOSSIER_CONFIG]/       # Configuration
+├── [DOSSIER_TESTS]/        # Tests
+└── [DOSSIER_DOCS]/         # Documentation
+```
 
 ---
 
-## Organisation du Code
+## Organisation des Modules/Features
 
-### Pattern: Vertical Slice Architecture
+### Structure d'un Module
 
-Chaque feature est auto-contenue :
+<!-- PERSONNALISER: Adapter selon votre architecture -->
 
 ```
-features/[feature-name]/
-├── [feature].entity.ts       # Logique métier
-├── [feature].dto.ts          # DTOs + validation
+[feature]/
+├── [feature].entity.ts       # Logique métier + validation
+├── [feature].dto.ts          # DTOs + schemas
 ├── [feature].repository.ts   # Accès données
-├── [feature].service.ts      # Orchestration
-├── [feature].controller.ts   # Endpoints
-├── [feature].module.ts       # Module
-└── __tests__/                # Tests
+├── [feature].service.ts      # Orchestration use cases
+├── [feature].controller.ts   # Endpoints HTTP/Interface
+├── [feature].module.ts       # Module/Configuration
+├── index.ts                  # Exports publics
+└── __tests__/
+    └── [feature].service.spec.ts
 ```
 
-### Flux d'une Requête (Backend)
+### Flux d'une Requête
 
 ```
-HTTP Request
+Requête Entrante
     ↓
 Controller (validation, auth)
     ↓
-Service (logique métier)
+Service (logique métier, orchestration)
     ↓
 Repository (accès données)
+    ↓
+Entity (validation domaine)
     ↓
 Database
 ```
 
 ---
 
-## Règles de Dépendances
+## Règles d'Architecture
+
+### Règles des Modules
+
+| Règle | Détail |
+|-------|--------|
+| Modules isolés | Un module ne peut pas importer un autre module directement |
+| Pas d'interface single-impl | Créer l'interface quand 2ème impl existe |
+| Validation | Chaque entrée a sa validation |
+| Tests unitaires | Chaque service a ses tests |
 
 ### Matrice de Dépendances
+
+<!-- PERSONNALISER: Adapter selon votre architecture -->
 
 | Module | Peut importer |
 |--------|---------------|
 | Core/Shared | Rien (standalone) |
-| Features | Core, pas d'autres features |
-| UI Components | Core, UI libs |
+| Feature A | Core/Shared |
+| Feature B | Core/Shared |
 
 ### Ce Qui est INTERDIT
 
 ```typescript
-// ❌ Feature qui importe une autre feature
-import { UserService } from '../users/user.service';
+// ❌ Feature qui importe une feature
+import { ServiceA } from '../feature-a/service-a';
 
-// ✅ Utiliser le module (injection de dépendances)
-// ou extraire vers core/ si vraiment partagé
+// ❌ Dépendance circulaire
+// feature-a → feature-b → feature-a
 ```
 
 ---
@@ -99,23 +113,21 @@ import { UserService } from '../users/user.service';
 
 ### Schéma Principal
 
-> **Adapter** selon le projet
+<!-- PERSONNALISER: Adapter selon votre modèle de données -->
 
 ```
-[Entity A] ───< [Entity B] >─── [Entity C]
-     │              │
-     └──< [Entity D]
+[ENTITE_1] ─────< [RELATION] >───── [ENTITE_2]
+     │                                    │
+     └──< [ENTITE_3] >────────────────────┘
 ```
 
-### Conventions
+### Entités Principales
 
-| Aspect | Convention |
-|--------|------------|
-| Noms de tables | snake_case pluriel |
-| Noms de colonnes | snake_case |
-| Clés primaires | `id` (UUID ou auto-increment) |
-| Clés étrangères | `[table]_id` |
-| Timestamps | `created_at`, `updated_at` |
+| Entité | Rôle | Status |
+|--------|------|:------:|
+| [ENTITE_1] | [DESCRIPTION] | ✅ |
+| [ENTITE_2] | [DESCRIPTION] | ✅ |
+| [ENTITE_3] | [DESCRIPTION] | 🔜 |
 
 ---
 
@@ -123,23 +135,23 @@ import { UserService } from '../users/user.service';
 
 ### Authentification
 
-> **Décrire** le système d'auth utilisé
+<!-- PERSONNALISER: Décrire votre système d'auth -->
 
 ```
-┌─────────────┐     Login      ┌─────────────┐
-│   Frontend  │ ────────────→  │   Backend   │
+┌─────────────┐     Auth       ┌─────────────┐
+│   Client    │ ────────────→  │   Serveur   │
 │             │ ←──────────── │             │
-│             │  Access Token  │             │
+│             │  Token/Session │             │
 └─────────────┘                └─────────────┘
 ```
 
-### Guards/Middleware
+### Middleware/Guards
 
-| Guard | Rôle | Statut |
-|-------|------|:------:|
-| Auth Guard | Vérifie le token | ✅ |
-| Roles Guard | Vérifie les rôles | ✅ |
-| [Autre Guard] | [Description] | ✅ |
+| Guard/Middleware | Rôle | Status |
+|------------------|------|:------:|
+| AuthGuard | Vérifie l'authentification | ✅ |
+| RolesGuard | Vérifie les rôles | ✅ |
+| [AUTRE_GUARD] | [DESCRIPTION] | 🔜 |
 
 ---
 
@@ -148,39 +160,39 @@ import { UserService } from '../users/user.service';
 ### 1. Créer la structure
 
 ```bash
-mkdir -p src/features/ma-feature/__tests__
+mkdir -p [chemin]/features/ma-feature/__tests__
 ```
 
 ### 2. Créer les fichiers
 
 ```
 ma-feature/
-├── ma-feature.entity.ts
-├── ma-feature.dto.ts
-├── ma-feature.repository.ts
-├── ma-feature.service.ts
-├── ma-feature.controller.ts
-├── ma-feature.module.ts
+├── ma-feature.entity.ts       # Logique métier
+├── ma-feature.dto.ts          # DTOs + validation
+├── ma-feature.repository.ts   # Accès données
+├── ma-feature.service.ts      # Orchestration
+├── ma-feature.controller.ts   # Endpoints
+├── ma-feature.module.ts       # Module
+├── index.ts                   # Exports
 └── __tests__/
     └── ma-feature.service.spec.ts
 ```
 
 ### 3. Enregistrer le module
 
+<!-- PERSONNALISER: Montrer comment enregistrer un module -->
+
 ```typescript
-// app.module.ts ou équivalent
+// Dans le fichier principal
 import { MaFeatureModule } from './features/ma-feature';
 
-@Module({
-  imports: [MaFeatureModule],
-})
-export class AppModule {}
+// Enregistrer le module
 ```
 
-### 4. Tester
+### 4. Tests
 
 ```bash
-[TEST_COMMAND] src/features/ma-feature
+[COMMANDE_TEST] [chemin]/features/ma-feature
 ```
 
 ---
@@ -189,29 +201,30 @@ export class AppModule {}
 
 | Type | Convention | Exemple |
 |------|------------|---------|
-| Entity | `{name}.entity.ts` | `user.entity.ts` |
-| DTO | `{name}.dto.ts` | `user.dto.ts` |
-| Repository | `{names}.repository.ts` | `users.repository.ts` |
-| Service | `{names}.service.ts` | `users.service.ts` |
-| Controller | `{names}.controller.ts` | `users.controller.ts` |
-| Tests | `{name}.spec.ts` | `users.service.spec.ts` |
-| Composants | `{Name}.tsx` | `UserCard.tsx` |
+| Entity | `{name}.entity.ts` | `resource.entity.ts` |
+| DTO | `{name}.dto.ts` | `resource.dto.ts` |
+| Repository | `{names}.repository.ts` | `resources.repository.ts` |
+| Service | `{names}.service.ts` | `resources.service.ts` |
+| Controller | `{names}.controller.ts` | `resources.controller.ts` |
+| Module | `{names}.module.ts` | `resources.module.ts` |
+| Tests | `{name}.spec.ts` | `resources.service.spec.ts` |
 
 ---
 
-## Environnements
+## Documentation
 
-| Environnement | URL | Description |
-|---------------|-----|-------------|
-| Local | `http://localhost:XXXX` | Développement |
-| Staging | [URL] | Tests |
-| Production | [URL] | Live |
+### Documentation IA (.ai/)
 
----
+Structure optimisée pour travail par agents IA:
 
-## Diagrammes
+```
+.ai/
+├── ENTRY.md              # Point d'entrée obligatoire
+├── PROJECT-STATE.md      # Source de vérité unique
+├── RULES.md              # Règles de code
+├── ARCHITECTURE.md       # Ce fichier
+├── ROADMAP.md            # Phases futures
+└── agents/               # Agents IA spécialisés
+```
 
-> **Ajouter** des diagrammes selon les besoins :
-> - Diagramme de composants
-> - Diagramme de séquence pour les flux critiques
-> - Diagramme de déploiement
+**Workflow agent**: ENTRY → PROJECT-STATE → RULES → Coder → Mettre à jour PROJECT-STATE

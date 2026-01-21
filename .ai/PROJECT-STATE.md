@@ -4,15 +4,29 @@
 > **Mets-le à jour après CHAQUE tâche terminée.**
 
 **Dernière mise à jour**: [DATE]  
-**Mis à jour par**: [QUI]
+**Mis à jour par**: [AGENT/HUMAIN]
+
+---
+
+## Table des Matières
+
+- [Tâche En Cours](#tâche-en-cours)
+- [Progression Globale](#progression-globale)
+- [Ce Qui Est Fait](#ce-qui-est-fait)
+- [Ce Qui Fonctionne](#ce-qui-fonctionne)
+- [Actions En Attente](#actions-en-attente)
+- [Blockers](#blockers)
+- [Métriques](#métriques)
+- [Learnings](#learnings)
+- [Tâches Complétées (Récentes)](#tâches-complétées-récentes)
 
 ---
 
 ## Tâche En Cours
 
-| ID | Description | Assigné | Statut |
-|----|-------------|---------|--------|
-| - | Aucune tâche en cours | - | - |
+| ID | Description | Statut |
+|----|-------------|--------|
+| - | Aucune tâche en cours | - |
 
 ---
 
@@ -20,70 +34,51 @@
 
 ### Vue d'Ensemble
 
-```
-PHASE 1: [NOM]          [STATUT] (XX%)
-PHASE 2: [NOM]          [STATUT] (XX%)
-PHASE 3: [NOM]          [STATUT] (XX%)
-```
+<!-- PERSONNALISER: Adapter les phases à votre projet -->
 
-> Légende: `[TODO]` `[EN COURS]` `[FAIT]` `[BLOQUÉ]`
+```
+PHASE 0: Setup Initial        [EN COURS] (XX%)
+PHASE 1: MVP                  [À FAIRE] (0%)
+PHASE 2: Features Avancées    [À FAIRE] (0%)
+PHASE 3: Production           [À FAIRE] (0%)
+```
 
 ---
 
 ## Ce Qui Est Fait
 
-### Phase 1: [Nom de la Phase]
+### Phase 0: Setup [EN COURS]
 
 | Tâche | Description | Statut |
 |-------|-------------|--------|
-| 1.1 | [Description] | [FAIT] |
-| 1.2 | [Description] | [FAIT] |
+| 0.1 | [TÂCHE_1] | [FAIT/À FAIRE] |
+| 0.2 | [TÂCHE_2] | [FAIT/À FAIRE] |
 
-### Phase 2: [Nom de la Phase]
+### Phase 1: MVP [À FAIRE]
 
 | Tâche | Description | Statut |
 |-------|-------------|--------|
-| 2.1 | [Description] | [EN COURS] |
+| 1.1 | [TÂCHE_1] | [À FAIRE] |
+| 1.2 | [TÂCHE_2] | [À FAIRE] |
 
 ---
 
 ## Ce Qui Fonctionne
 
 | Feature | Backend | Frontend | Tests |
-|---------|:-------:|:--------:|:-----:|
-| [Feature 1] | ✅ | ✅ | ✅ |
-| [Feature 2] | ✅ | 🔄 | ❌ |
-
-> Légende: ✅ Fait | 🔄 En cours | ❌ À faire
+|---------|---------|----------|-------|
+| [FEATURE_1] | [FAIT/À FAIRE] | [FAIT/À FAIRE] | [X tests] |
+| [FEATURE_2] | [FAIT/À FAIRE] | [FAIT/À FAIRE] | [X tests] |
 
 ---
 
-## Prochaines Actions
+## Actions En Attente
 
-### Priorité Haute
-
-| Tâche | Description | Effort | Impact |
-|-------|-------------|:------:|--------|
-| [ID] | [Description] | [Xj] | [Impact] |
-
-### Priorité Moyenne
-
-| Tâche | Description | Effort | Impact |
-|-------|-------------|:------:|--------|
-| [ID] | [Description] | [Xj] | [Impact] |
-
----
-
-## Stack Technique
-
-| Domaine | Technologie | Statut |
-|---------|-------------|:------:|
-| **Langage** | [Ex: TypeScript] | ✅ |
-| **Frontend** | [Ex: React + Vite] | ✅ |
-| **Backend** | [Ex: NestJS] | ✅ |
-| **Base de données** | [Ex: PostgreSQL] | ✅ |
-| **ORM** | [Ex: Prisma] | ✅ |
-| **Tests** | [Ex: Vitest] | ✅ |
+| Action | Effort | Priorité | Impact |
+|--------|--------|----------|--------|
+| [ACTION_1] | [X jours] | HAUTE | [DESCRIPTION] |
+| [ACTION_2] | [X jours] | MOYENNE | [DESCRIPTION] |
+| [ACTION_3] | [X jours] | BASSE | [DESCRIPTION] |
 
 ---
 
@@ -98,10 +93,10 @@ PHASE 3: [NOM]          [STATUT] (XX%)
 ## Métriques
 
 | Métrique | Cible | Actuel |
-|----------|:-----:|:------:|
-| Couverture tests | > 70% | XX% |
-| Erreurs typage | 0 | XX |
-| Build time | < 2min | XXs |
+|----------|-------|--------|
+| Couverture tests | > 70% | ~X% |
+| Erreurs de type | 0 | X |
+| Build time | < 2min | ~Xs |
 
 ---
 
@@ -109,16 +104,18 @@ PHASE 3: [NOM]          [STATUT] (XX%)
 
 ### Architecture
 
-- [Learning 1]
-- [Learning 2]
+- [LEARNING_1]
+- [LEARNING_2]
 
 ### Patterns
 
-- [Pattern découvert]
+- [PATTERN_1]
+- [PATTERN_2]
 
 ### Gotchas
 
-- [Piège à éviter]
+- [GOTCHA_1]
+- [GOTCHA_2]
 
 ---
 
@@ -126,4 +123,4 @@ PHASE 3: [NOM]          [STATUT] (XX%)
 
 | Date | Tâche | Impact |
 |------|-------|--------|
-| [DATE] | [Tâche] | [Impact] |
+| [DATE] | [TÂCHE] | [IMPACT] |

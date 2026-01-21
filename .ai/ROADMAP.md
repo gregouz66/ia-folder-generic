@@ -1,131 +1,154 @@
 # Roadmap
 
-> **Vision**: [Description courte de la vision du projet]
->
-> **État actuel**: Voir `PROJECT-STATE.md` pour le statut détaillé.
+> **Vision**: [DESCRIPTION_VISION_PROJET]
+> 
+> **État actuel**: Voir [`PROJECT-STATE.md`](./PROJECT-STATE.md) pour le statut détaillé.
+
+---
+
+## Table des Matières
+
+- [Vue Synthétique](#vue-synthétique)
+- [Phases Complétées](#phases-complétées)
+- [Phase Actuelle](#phase-actuelle)
+- [Phases Futures](#phases-futures)
+- [Timeline Estimée](#timeline-estimée)
+- [Risques Identifiés](#risques-identifiés)
+- [Dépendances entre Tâches](#dépendances-entre-tâches)
+- [Checklist "Base Solide"](#checklist-base-solide)
+- [Métriques Cibles](#métriques-cibles)
 
 ---
 
 ## Vue Synthétique
 
 ```
-[FAIT] Phase 1: [Nom]
+[FAIT] Phase 0: Setup Initial
     |
     v
-[EN COURS] Phase 2: [Nom]
+[EN COURS] Phase 1: [NOM_PHASE_1] (~X jours)
+    - [TÂCHE_1.1] ................... [À FAIRE]
+    - [TÂCHE_1.2] ................... [À FAIRE]
     |
     v
-[TODO] Phase 3: [Nom]
+[À FAIRE] Phase 2: [NOM_PHASE_2]
     |
     v
-[TODO] Phase 4: [Nom]
+[À FAIRE] Phase 3: [NOM_PHASE_3]
+    |
+    v
+[PRODUCTION] Prêt à déployer
 ```
 
 ---
 
 ## Phases Complétées
 
-### Phase 1: [Nom] ✅
+### Phase 0: Setup Initial [FAIT]
 
 | Scope | Description | Statut |
-|-------|-------------|:------:|
-| 1.1 | [Description] | ✅ |
-| 1.2 | [Description] | ✅ |
-| 1.3 | [Description] | ✅ |
+|-------|-------------|--------|
+| 0.1 | Initialisation projet | [FAIT] |
+| 0.2 | Configuration environnement dev | [FAIT] |
+| 0.3 | CI/CD de base | [FAIT] |
 
 ---
 
 ## Phase Actuelle
 
-### Phase 2: [Nom] 🔄
+### Phase 1: [NOM_PHASE_1] [EN COURS]
 
-| Scope | Description | Effort | Statut |
-|-------|-------------|:------:|:------:|
-| 2.1 | [Description] | [Xj] | ✅ |
-| 2.2 | [Description] | [Xj] | 🔄 |
-| 2.3 | [Description] | [Xj] | ⏳ |
+| Tâche | Effort | Priorité | Statut |
+|-------|--------|----------|--------|
+| 1.1 [TÂCHE_1.1] | X jours | HAUTE | [À FAIRE] |
+| 1.2 [TÂCHE_1.2] | X jours | HAUTE | [À FAIRE] |
+| 1.3 [TÂCHE_1.3] | X jours | MOYENNE | [À FAIRE] |
 
-**Détails:**
+**Détail [TÂCHE_1.1]:**
 ```
-Tâche 2.2 - [Nom]
-├── Sous-tâche A .......................... [FAIT]
-├── Sous-tâche B .......................... [EN COURS]
-└── Sous-tâche C .......................... [À FAIRE]
+[SOUS_TÂCHE_A] .......................... Xj
+[SOUS_TÂCHE_B] .......................... Xj
+[SOUS_TÂCHE_C] .......................... Xj
 ```
 
 ---
 
 ## Phases Futures
 
-### Phase 3: [Nom]
-
-> **Prérequis**: Phase 2 terminée
+### Phase 2: [NOM_PHASE_2] [À FAIRE]
 
 | Scope | Description | Priorité | Effort |
-|-------|-------------|:--------:|:------:|
-| 3.1 | [Description] | Haute | [Xj] |
-| 3.2 | [Description] | Moyenne | [Xj] |
-| 3.3 | [Description] | Basse | [Xj] |
+|-------|-------------|----------|--------|
+| 2.1 | [DESCRIPTION] | Haute | Xj |
+| 2.2 | [DESCRIPTION] | Moyenne | Xj |
+| 2.3 | [DESCRIPTION] | Basse | Xj |
 
-### Phase 4: [Nom]
+### Phase 3: [NOM_PHASE_3] [À FAIRE]
 
 | Scope | Description | Priorité | Effort |
-|-------|-------------|:--------:|:------:|
-| 4.1 | [Description] | Haute | [Xj] |
-| 4.2 | [Description] | Moyenne | [Xj] |
+|-------|-------------|----------|--------|
+| 3.1 | [DESCRIPTION] | Critique | Xj |
+| 3.2 | [DESCRIPTION] | Haute | Xj |
 
 ---
 
 ## Timeline Estimée
 
 ```
-[Mois 1]        ████████████░░░░  Phase 2 (Xj)
-[Mois 2]        ░░░░████████████  Phase 3 (Xj)
-[Mois 3]        ░░░░░░░░████████  Phase 4 (Xj)
-```
-
----
-
-## Dépendances entre Tâches
-
-```
-[Tâche A]
-    |
-    +---> [Tâche B]
-    |         |
-    |         +---> [Tâche D]
-    |
-    +---> [Tâche C]
+[MOIS] W1-2    ████████████░░░░  Phase 1 (Xj)
+[MOIS] W3-4    ░░░░████████████  Phase 2 (Xj)
+[MOIS+1] W1-2  ░░░░░░░░████████  Phase 3 (Xj)
+[MOIS+1] W3    ░░░░░░░░░░░░████  Production
 ```
 
 ---
 
 ## Risques Identifiés
 
-| Risque | Probabilité | Impact | Mitigation |
-|--------|:-----------:|:------:|------------|
-| [Risque 1] | Moyenne | Haut | [Action] |
-| [Risque 2] | Faible | Moyen | [Action] |
+| Risque | Probabilité | Mitigation |
+|--------|-------------|------------|
+| [RISQUE_1] | Moyenne | [MITIGATION] |
+| [RISQUE_2] | Faible | [MITIGATION] |
+| [RISQUE_3] | Haute | [MITIGATION] |
+
+---
+
+## Dépendances entre Tâches
+
+```
+[TÂCHE_A]
+    |
+    +---> [TÂCHE_B]
+    |       |
+    |       +---> [TÂCHE_D]
+    |
+    +---> [TÂCHE_C]
+
+[TÂCHE_E] --> Indépendant, peut être fait en parallèle
+```
+
+---
+
+## Checklist "Base Solide"
+
+Avant de commencer les features avancées, vérifier:
+
+- [ ] Setup initial complet
+- [ ] CI/CD fonctionnel
+- [ ] Tests de base en place
+- [ ] Documentation minimale
+- [ ] [CRITÈRE_SPÉCIFIQUE_1]
+- [ ] [CRITÈRE_SPÉCIFIQUE_2]
+- [ ] Build passe sans erreurs
+- [ ] 0 violations des règles de code
 
 ---
 
 ## Métriques Cibles
 
 | Métrique | Cible |
-|----------|:-----:|
+|----------|-------|
 | Couverture tests | > 70% |
 | Build time | < 2min |
-| Performance [X] | [Cible] |
-| Uptime | 99.5% |
-
----
-
-## Décisions Clés
-
-> Voir `DECISIONS.md` pour les justifications détaillées.
-
-| Décision | Raison |
-|----------|--------|
-| [Techno A] | [Raison courte] |
-| [Techno B] | [Raison courte] |
-| [Pattern C] | [Raison courte] |
+| Time to first byte (API) | < 200ms |
+| Uptime SLA | 99.5% |

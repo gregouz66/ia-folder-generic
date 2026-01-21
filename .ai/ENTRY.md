@@ -13,55 +13,63 @@
 | 2 | `RULES.md` | Règles de code, conventions, interdictions | **TOUJOURS avant de coder** |
 | 3 | `ARCHITECTURE.md` | Structure technique, packages, features | Si tu modifies l'architecture |
 | 4 | `ROADMAP.md` | Phases futures, vision produit | Si tu planifies une feature |
-| 5 | `DECISIONS.md` | Décisions techniques justifiées (ADR) | Si tu questionnes un choix techno |
 
 ---
 
 ## Système d'Agents Spécialisés
 
-Ce projet utilise un **système d'agents spécialisés** pour déléguer le travail.
+Ce projet utilise un **système d'agents spécialisés** pour déléguer le travail au bon modèle IA.
 
 ### Agents Disponibles
 
-| Agent | Spécialité | Fichier |
-|-------|------------|---------|
-| @orchestrator | Coordination, état | `agents/orchestrator.md` |
-| @ultrawork | **Mode haute performance** (parallèle + vérification) | `agents/ultrawork.md` |
-| @planner | Planification scopes | `agents/planner.md` |
-| @techlead | Architecture, design | `agents/techlead.md` |
-| @analyst | Analyse business | `agents/analyst.md` |
-| @builder | Implémentation backend | `agents/builder.md` |
-| @frontend-engineer | UI/UX, composants | `agents/frontend-engineer.md` |
-| @qa-security | QA, sécurité, audit | `agents/qa-security.md` |
-| @product-manager | User stories | `agents/product-manager.md` |
-| @consolidator | Nettoyage état | `agents/consolidator.md` |
-| @spec-agent | Specs interactives | `agents/spec-agent.md` |
+| Agent | Spécialité | Invocation |
+|-------|------------|------------|
+| @orchestrator | Coordination, état | Agent principal |
+| @ultravwork | **Mode haute performance** (parallèle + vérification) | `@ultravwork` |
+| @planner | Planification scopes | `@planner` |
+| @techlead | Architecture, design | `@techlead` |
+| @analyst | Analyse business | `@analyst` |
+| @builder | Implémentation backend | `@builder` |
+| @frontend-engineer | **UI/UX, composants, animations** | `@frontend-engineer` |
+| @qa-security | QA, sécurité, audit | `@qa-security` |
+| @product-manager | User stories | `@product-manager` |
+| @consolidator | Nettoyage état | `@consolidator` |
+| @spec-agent | Specs interactives | `@spec-agent` |
 
-> **Modèles IA**: Recommandations dans `agents/MODELS.md` (guide de veille inclus)
+> **Modèles IA**: Recommandations dans `agents/MODELS.md`
 
 ### Comment Utiliser les Agents
 
-Pour utiliser un agent, demande à l'IA de lire son fichier et d'agir selon ce rôle :
+**Option 1: Mention directe**
+```
+@builder Implémente le endpoint GET /api/resources selon la spec
+```
 
+**Option 2: Via l'orchestrator**
 ```
-Lis .ai/agents/builder.md et agis comme cet agent.
-[Ta tâche ici]
+@orchestrator Je veux créer une nouvelle feature "notifications"
 ```
+→ L'orchestrator délègue automatiquement aux bons agents
+
+**Option 3: Mode ULTRAVWORK (haute performance)**
+```
+@ultravwork Implémente la feature "notifications" avec tous les tests
+```
+→ ULTRAVWORK parallélise les agents, vérifie avec preuves, garantit 100% complet
 
 ---
 
 ## Contexte Projet
 
-> **À PERSONNALISER** pour chaque projet
+<!-- PERSONNALISER: Adapter ces informations à votre projet -->
 
 | Élément | Valeur |
 |---------|--------|
 | **Nom** | [NOM_PROJET] |
-| **Type** | [TYPE: SaaS, API, Mobile, etc.] |
-| **Stack Backend** | [STACK_BACKEND: ex. NestJS + Prisma + PostgreSQL] |
-| **Stack Frontend** | [STACK_FRONTEND: ex. React + TailwindCSS] |
-| **Monorepo** | [OUTIL: NX, Turborepo, ou N/A] |
-| **État** | [ÉTAT: MVP, Production, Maintenance, etc.] |
+| **Type** | [TYPE_APPLICATION] |
+| **Stack Backend** | [TECHNOLOGIES_BACKEND] |
+| **Stack Frontend** | [TECHNOLOGIES_FRONTEND] |
+| **État** | [ÉTAT_ACTUEL] |
 | **Phase actuelle** | [PHASE_ACTUELLE] |
 
 ---
@@ -71,19 +79,16 @@ Lis .ai/agents/builder.md et agis comme cet agent.
 ### Ce que tu DOIS faire
 
 1. **Lire PROJECT-STATE.md** avant toute action
-2. **Écrire les commentaires** dans la langue du projet (voir RULES.md)
-3. **Mettre à jour PROJECT-STATE.md** après chaque tâche terminée
-4. **Suivre l'architecture définie** dans ARCHITECTURE.md
-5. **Valider avec les commandes de test** avant de considérer une tâche terminée
-6. **Penser sécurité** à chaque ligne de code
+2. **Mettre à jour PROJECT-STATE.md** après chaque tâche terminée
+3. **Suivre les conventions de code** définies dans RULES.md
+4. **Valider avec les commandes de test/lint** avant de considérer une tâche terminée
 
 ### Ce que tu ne dois JAMAIS faire
 
-1. ❌ Ignorer les erreurs de typage
-2. ❌ Supprimer des tests pour faire passer le build
-3. ❌ Committer sans que les tests passent
-4. ❌ Inventer des patterns non documentés
-5. ❌ Modifier l'architecture sans validation
+1. Utiliser `any` en TypeScript (si applicable)
+2. Ignorer les erreurs de type (`@ts-ignore`, `@ts-expect-error`)
+3. Committer sans que les tests passent
+4. Modifier du code sans comprendre le contexte
 
 ---
 
@@ -114,8 +119,7 @@ Lis .ai/agents/builder.md et agis comme cet agent.
 ### Pour une Question/Exploration
 
 ```
-Lis .ai/agents/analyst.md et agis comme cet agent.
-Explique-moi comment fonctionne [X]
+@analyst Explique-moi comment fonctionne [FEATURE]
 ```
 
 ---
@@ -128,52 +132,54 @@ Explique-moi comment fonctionne [X]
    - Ajouter les learnings si tu as découvert quelque chose d'utile
 
 2. **Vérifier**:
-   - Tests passent
-   - Pas d'erreurs de typage
-   - Pas de code debug oublié
+   - Commandes de vérification (lint, test, typecheck) → 0 erreurs
+   - Pas de `console.log` oublié
 
 ---
 
-## Structure Type du Projet
+## Structure du Projet
+
+<!-- PERSONNALISER: Adapter cette structure à votre projet -->
 
 ```
-projet/
+[PROJET]/
 ├── .ai/                    # Documentation IA (tu es ici)
-│   ├── ENTRY.md            # ⭐ Ce fichier (point d'entrée)
+│   ├── ENTRY.md            # Ce fichier (point d'entrée)
 │   ├── PROJECT-STATE.md    # État du projet (source de vérité)
-│   ├── RULES.md            # Règles de code
+│   ├── RULES.md            # Règles de code (interdictions)
 │   ├── ARCHITECTURE.md     # Architecture technique
 │   ├── ROADMAP.md          # Phases futures
-│   ├── DECISIONS.md        # Décisions techniques (ADR)
 │   └── agents/             # Agents IA spécialisés
 │       ├── MODELS.md       # Recommandations modèles IA
 │       ├── orchestrator.md
-│       ├── ultrawork.md
+│       ├── ultravwork.md
 │       ├── builder.md
-│       └── ...
+│       ├── frontend-engineer.md
+│       ├── planner.md
+│       ├── techlead.md
+│       ├── analyst.md
+│       ├── qa-security.md
+│       ├── product-manager.md
+│       ├── consolidator.md
+│       └── spec-agent.md
 │
-├── docs/                   # Documentation pour HUMAINS
-│
-└── src/                    # Code source (structure variable)
+├── [STRUCTURE_PROJET]/     # Code source
+└── README.md               # Vue d'ensemble projet
 ```
 
 ---
 
 ## Commandes Utiles
 
-> **À PERSONNALISER** selon le projet
+<!-- PERSONNALISER: Adapter les commandes à votre projet -->
 
 ```bash
 # Commandes de développement
-[COMMANDE_DEV]        # Ex: pnpm dev
-
-# Commandes de build
-[COMMANDE_BUILD]      # Ex: pnpm build
-
-# Commandes de test
-[COMMANDE_TEST]       # Ex: pnpm test
-[COMMANDE_TYPECHECK]  # Ex: pnpm typecheck
-[COMMANDE_LINT]       # Ex: pnpm lint
+[COMMANDE_DEV]        # Lancer en mode développement
+[COMMANDE_BUILD]      # Build production
+[COMMANDE_TEST]       # Lancer tests
+[COMMANDE_LINT]       # Vérifier le code
+[COMMANDE_TYPECHECK]  # Vérifier les types (si TypeScript)
 ```
 
 ---
@@ -181,7 +187,7 @@ projet/
 ## En Cas de Doute
 
 1. **Consulte `RULES.md`** pour les conventions de code
-2. **Regarde le code existant** comme exemple
+2. **Regarde le code existant** dans la même feature comme exemple
 3. **Demande clarification** si la tâche est ambiguë
 4. **Utilise le bon agent** pour la tâche
 
